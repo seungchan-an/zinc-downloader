@@ -78,19 +78,24 @@ def check_urls(urls, max_concurrent=4, timeout=5):
     )
 
 
-async def download_tranche(session, url, out_dir, chunk_size=8192, retries=3):
+async def download_tranche(session, url, out_dir, chunk_size=8192, retries=5):
     filename = os.path.join(out_dir, os.path.basename(url))
     for attempt in range(retries):
         try:
             async with session.get(url) as r:
-                if r.status == 200:
-                    async with aiofiles.open(filename, "wb") as f:
-                        async for chunk in r.content.iter_chunked(chunk_size):
+                if r.status != 200:
+                    await asyncio.sleep(0.5 * (attempt + 1))
+                    continue
+
+                async with aiofiles.open(filename, "wb") as f:
+                    async for chunk in r.content.iter_chunked(chunk_size):
+                        if chunk:
                             await f.write(chunk)
-                            await asyncio.sleep(random.uniform(0, 0.05))
-                    return filename, True
+                return filename, True
+
         except Exception:
             await asyncio.sleep(0.5 * (attempt + 1))
+
     return filename, False
 
 
