@@ -49,7 +49,7 @@ async def check_url(session, url, timeout=5, retries=3):
     return url, None
 
 
-async def check_urls(urls, max_concurrent=4, timeout=5):
+async def check_urls_async(urls, max_concurrent=4, timeout=5):
     connector = aiohttp.TCPConnector(
         limit=max_concurrent,
         ttl_dns_cache=300,
@@ -60,17 +60,22 @@ async def check_urls(urls, max_concurrent=4, timeout=5):
     async with aiohttp.ClientSession(
         connector=connector, timeout=timeout_cfg, auto_decompress=False
     ) as session:
-
         # results = await asyncio.gather(*(check_url(session, u, timeout) for u in urls))
         results = await tqdm_asyncio.gather(
             *(check_url(session, u, timeout) for u in urls),
             total=len(urls),
-            desc="[PROGRESS] Checking availability",
+            desc="[INFO] Checking availability",
             ncols=100,
             dynamic_ncols=False,
         )
 
         return results
+
+
+def check_urls(urls, max_concurrent=4, timeout=5):
+    return asyncio.run(
+        check_urls_async(urls, max_concurrent=max_concurrent, timeout=timeout)
+    )
 
 
 async def download_tranche(session, url, out_dir, chunk_size=8192, retries=3):
@@ -89,7 +94,7 @@ async def download_tranche(session, url, out_dir, chunk_size=8192, retries=3):
     return filename, False
 
 
-async def download_tranches(urls, out_dir="downloads/zinc", max_concurrent=4):
+async def download_tranches_async(urls, out_dir="downloads/zinc", max_concurrent=4):
     os.makedirs(out_dir, exist_ok=True)
     connector = aiohttp.TCPConnector(
         limit=max_concurrent,
@@ -103,10 +108,16 @@ async def download_tranches(urls, out_dir="downloads/zinc", max_concurrent=4):
         for coro in tqdm_asyncio.as_completed(
             tasks,
             total=len(tasks),
-            desc="[PROGRESS] Downloading ZINC tranches",
+            desc="[INFO] Downloading ZINC tranches",
             ncols=100,
             dynamic_ncols=False,
         ):
             result = await coro
             results.append(result)
         return results
+
+
+def download_tranches(urls, out_dir="downloads/zinc", max_concurrent=4):
+    return asyncio.run(
+        download_tranches_async(urls, out_dir=out_dir, max_concurrent=max_concurrent)
+    )

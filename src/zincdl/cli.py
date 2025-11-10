@@ -2,7 +2,6 @@
 
 
 import click
-import asyncio
 import logging
 from .defaults import DEFAULTS
 from .utils import parse_list
@@ -34,7 +33,7 @@ def main(download, outdir, verbose, **kwargs):
     urls = generate_urls(**kwargs)
 
     if download:
-        asyncio.run(download_tranches(urls, outdir))
+        download_tranches(urls, outdir)
 
 
 if __name__ == "__main__":

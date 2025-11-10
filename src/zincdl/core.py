@@ -2,7 +2,6 @@
 
 
 import itertools
-import asyncio
 import logging
 from .defaults import DEFAULTS
 from .utils import (
@@ -89,7 +88,7 @@ def generate_urls(
     logger.info(f"\n[INFO] Generating and checking URLs (format: {fmt})")
     urls = codes_to_urls(tranche_codes, fmt, BASE_URL)
 
-    urls_checked = asyncio.run(check_urls(urls))
+    urls_checked = check_urls(urls)
     failed = [(u, ok) for u, ok in urls_checked if ok is not True]
     if failed:
         logger.debug(f"[DEBUG] Failed URLs ({len(failed)}): {[u for u, _ in failed]}")
