@@ -83,7 +83,7 @@ def generate_urls(
     logger.info(f"  Purchasability : {purch_label}")
     logger.info(f"  pH             : {ph}")
     logger.info(f"  Charge         : {charge}")
-    logger.info(f"> Total tranche codes : {len(tranche_codes)}")
+    logger.info(f"> # tranches     : {len(tranche_codes)}")
 
     logger.info(f"\n[INFO] Generating and checking URLs (format: {fmt})")
     urls = codes_to_urls(tranche_codes, fmt, BASE_URL)
@@ -94,16 +94,6 @@ def generate_urls(
         logger.debug(f"[DEBUG] Failed URLs ({len(failed)}): {[u for u, _ in failed]}")
 
     urls = [u for u, ok in urls_checked if ok]
-
-    logger.info(f"> Active URLs : {len(urls)}")
-
-    if urls:
-        max_show = 3
-        logger.info(f"  Previewing {min(len(urls), max_show)} of {len(urls)}:")
-        for u in urls[:max_show]:
-            logger.info(u)
-        if len(urls) > max_show:
-            logger.info("...")
-        logger.info("\n")
+    logger.info(f"> # active URLs  : {len(urls)} / {len(tranche_codes)}")
 
     return urls
