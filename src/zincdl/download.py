@@ -94,7 +94,7 @@ async def download_tranche(session, url, out_dir, chunk_size=8192, retries=3):
     return filename, False
 
 
-async def download_tranches_async(urls, out_dir="downloads/zinc", max_concurrent=4):
+async def download_tranches_async(urls, out_dir="downloads/zinc", max_concurrent=3):
     os.makedirs(out_dir, exist_ok=True)
     connector = aiohttp.TCPConnector(
         limit=max_concurrent,
@@ -105,6 +105,7 @@ async def download_tranches_async(urls, out_dir="downloads/zinc", max_concurrent
     async with aiohttp.ClientSession(connector=connector) as session:
         tasks = [download_tranche(session, u, out_dir) for u in urls]
         results = []
+
         for coro in tqdm_asyncio.as_completed(
             tasks,
             total=len(tasks),
@@ -112,8 +113,22 @@ async def download_tranches_async(urls, out_dir="downloads/zinc", max_concurrent
             ncols=100,
             dynamic_ncols=False,
         ):
-            result = await coro
-            results.append(result)
+            filename, ok = await coro
+            results.append((filename, ok))
+
+        success = [f for (f, ok) in results if ok]
+        failed = [f for (f, ok) in results if not ok]
+
+        print("\n=== DOWNLOAD SUMMARY ===")
+        print(f"  Success: {len(success)}")
+        print(f"  Failed : {len(failed)}")
+
+        if failed:
+            print("  Failed files:")
+            for f in failed:
+                print(f"    - {f}")
+        print("========================\n")
+
         return results
 
 
@@ -121,3 +136,11 @@ def download_tranches(urls, out_dir="downloads/zinc", max_concurrent=4):
     return asyncio.run(
         download_tranches_async(urls, out_dir=out_dir, max_concurrent=max_concurrent)
     )
+
+
+def download_urls(urls, out_dir="downloads/zinc"):
+    os.makedirs(out_dir, exist_ok=True)
+    fpath = os.path.join(out_dir, "zincdl.uri")
+    with open(fpath, "w") as f:
+        for u in urls:
+            f.write(u + "\n")

@@ -6,7 +6,7 @@ import logging
 from .defaults import DEFAULTS
 from .utils import parse_list
 from .core import generate_urls
-from .download import download_tranches
+from .download import download_urls, download_tranches
 
 @click.command()
 @click.option("--subset", default=None, help="Preset subset (e.g. leadlike, goldilocks)")
@@ -20,9 +20,9 @@ from .download import download_tranches
 @click.option("--purch_exclusive/--no_purch_exclusive", default=DEFAULTS["purch_exclusive"])
 @click.option("--fmt", default="smi")
 @click.option("--download", is_flag=True, help="Download the generated tranche files")
-@click.option("--outdir", default="downloads/zinc", help="Output directory for downloads")
+@click.option("--out_dir", default="downloads/zinc", help="Output directory for downloads")
 @click.option('--verbose', is_flag=True, help='Enable verbose logging')
-def main(download, outdir, verbose, **kwargs):
+def main(download, out_dir, verbose, **kwargs):
     if verbose:
         logging.getLogger().setLevel(logging.DEBUG)
 
@@ -33,7 +33,8 @@ def main(download, outdir, verbose, **kwargs):
     urls = generate_urls(**kwargs)
 
     if download:
-        download_tranches(urls, outdir)
+        download_urls(urls, out_dir)
+        download_tranches(urls, out_dir)
 
 
 if __name__ == "__main__":
