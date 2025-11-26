@@ -31,12 +31,12 @@ def test_download_flag(tmp_path, monkeypatch):
     """Mock download behavior to avoid network access."""
     called = {}
 
-    def fake_download_urls(urls, out_dir):
+    def fake_download_tranches(urls, out_dir):
         called["urls"] = urls
         called["out"] = out_dir
 
-    monkeypatch.setattr("zincdl.cli.download_urls", fake_download_urls)
+    monkeypatch.setattr("zincdl.cli.download_tranches", fake_download_tranches)
 
-    result = runner.invoke(main, ["--mw", "300", "--logp", "2", "--download", "--out_dir", str(tmp_path)])
+    result = runner.invoke(main, ["--mw", "300", "--logp", "2", "--download", "--out-dir", str(tmp_path)])
     assert result.exit_code == 0
     assert "urls" in called and tmp_path.name in called["out"]

@@ -143,7 +143,7 @@ def download_tranches(urls, out_dir="downloads/zinc", max_concurrent=4):
     )
 
 
-def download_urls(urls, out_dir="downloads/zinc"):
+def save_urls(urls, out_dir="downloads/zinc"):
     os.makedirs(out_dir, exist_ok=True)
     fpath = os.path.join(out_dir, "zincdl.uri")
     with open(fpath, "w") as f:

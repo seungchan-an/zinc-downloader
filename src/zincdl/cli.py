@@ -15,7 +15,7 @@ from .tranche_mappings import (
 from .defaults import DEFAULTS
 from .utils import parse_list
 from .core import generate_urls
-from .download import download_urls, download_tranches
+from .download import save_urls, download_tranches
 
 
 class FormatCommand(click.Command):
@@ -140,7 +140,7 @@ Examples:
     urls = generate_urls(**kwargs)
 
     if download:
-        download_urls(urls, out_dir)
+        save_urls(urls, out_dir)
         download_tranches(urls, out_dir)
 
 
