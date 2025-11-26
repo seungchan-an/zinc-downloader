@@ -40,9 +40,10 @@ class FormatCommand(click.Command):
 @click.command(cls=FormatCommand)
 @click.option(
     "--subset",
+    type=click.Choice(list(PREDEFINED_SUBSETS.keys())),
     default=None,
     show_default=True,
-    help=f"Preset subset of MW x logP grid (available: {', '.join(PREDEFINED_SUBSETS.keys())})",
+    help="Use a predefined MW x logP subset.",
 )
 @click.option(
     "--mw",
@@ -50,7 +51,7 @@ class FormatCommand(click.Command):
     callback=parse_list,
     default=str(DEFAULTS["mw"]),
     show_default=True,
-    help=f"MW bins up to ... (available: {', '.join([str(k) for k in MW_MAP.keys()])})",
+    help=f"Comma-separated MW upper bounds. (e.g. {', '.join([str(k) for k in MW_MAP.keys()])})",
 )
 @click.option(
     "--logp",
@@ -58,21 +59,21 @@ class FormatCommand(click.Command):
     callback=parse_list,
     default=str(DEFAULTS["logp"]),
     show_default=True,
-    help=f"logP bins up to ... (available: {', '.join([str(k) for k in LOGP_MAP.keys()])})",
+    help=f"Comma-separated logP upper bounds. (e.g. {', '.join([str(k) for k in LOGP_MAP.keys()])})",
 )
 @click.option(
     "--reactivity",
     type=click.Choice([n for n, _ in REACTIVITY_LEVELS]),
     default=DEFAULTS["reactivity"],
     show_default=True,
-    help=f"Reactivity levels (available: {', '.join([n for n, _ in REACTIVITY_LEVELS])})",
+    help="Reactivity levels.",
 )
 @click.option(
     "--purchasability",
     type=click.Choice([n for n, _ in PURCHASABILITY_LEVELS]),
     default=DEFAULTS["purchasability"],
     show_default=True,
-    help=f"Purchasability levels (available: {', '.join([n for n, _ in PURCHASABILITY_LEVELS])})",
+    help="Purchasability levels.",
 )
 @click.option(
     "--ph",
@@ -80,7 +81,7 @@ class FormatCommand(click.Command):
     callback=parse_list,
     default=str(DEFAULTS["ph"]),
     show_default=True,
-    help=f"pH levels (available: {', '.join(PH_MAP.keys())})",
+    help=f"Comma-separated pH levels. (e.g. {', '.join(PH_MAP.keys())})",
 )
 @click.option(
     "--charge",
@@ -88,7 +89,7 @@ class FormatCommand(click.Command):
     callback=parse_list,
     default=str(DEFAULTS["charge"]),
     show_default=True,
-    help=f"Charge levels (available: {', '.join([str(k) for k in CHARGE_MAP.keys()])})",
+    help=f"Comma-separated charge levels. (e.g. {', '.join([str(k) for k in CHARGE_MAP.keys()])})",
 )
 @click.option(
     "--reac_exclusive",
@@ -109,21 +110,21 @@ class FormatCommand(click.Command):
     type=click.Choice(["smi", "txt", "sdf", "mol2", "db2", "pdbqt"]),
     default=DEFAULTS["fmt"],
     show_default=True,
-    help="File format to be downloaded.",
+    help="Output file format.",
 )
-@click.option("--download", is_flag=True, help="Download the generated tranche files")
+@click.option("--download", is_flag=True, help="Download the generated tranche files.")
 @click.option(
-    "--out_dir",
+    "--out-dir", "out_dir",
     default="downloads/zinc",
     show_default=True,
-    help="Output directory for downloads",
+    help="Output directory for downloads.",
 )
 @click.option("--verbose", is_flag=True, help="Enable verbose logging.")
 def main(download, out_dir, verbose, **kwargs):
     """ZINC downloader CLI
 
-    - ZINC tranches are browsable on https://zinc.docking.org/tranches
-    - Background on tranche organization: https://wiki.docking.org/index.php/Tranche_Browser
+ZINC tranches are browsable on https://zinc.docking.org/tranches
+Background on tranche organization: https://wiki.docking.org/index.php/Tranche_Browser
 
 Examples:
     zincdl --subset leadlike --fmt mol2
