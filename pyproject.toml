@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "zincdl"
+version = "0.1.0"
+description = "CLI and python interface for ZINC tranche code generation and batch download"
+authors = [{name = "Seungchan An", email = "ann081993@gmail.com"}]
+license = {text = "MIT"}
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "aiohttp",
+    "aiofiles",
+    "click",
+    "tqdm"
+]
+
+keywords = ["ZINC", "cheminformatics", "chemical database", "compound", "tranche", "download"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Topic :: Scientific/Engineering :: Chemistry"
+]
+
+[project.urls]
+Homepage = "https://github.com/seungchan-an/zinc-downloader"
+Repository = "https://github.com/seungchan-an/zinc-downloader.git"
+
+[project.scripts]
+zincdl = "zincdl.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
