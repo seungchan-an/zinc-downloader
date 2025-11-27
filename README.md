@@ -1,7 +1,7 @@
 # zinc-downloader
 
 [![PyPI](https://img.shields.io/pypi/v/zincdl.svg)](https://pypi.org/project/zincdl/)
-![Python Versions](https://img.shields.io/pypi/pyversions/zincdl)
+![Python](https://img.shields.io/badge/python-3.9%20|%203.10%20|%203.11%20|%203.12%20|%203.13-blue)
 ![License](https://img.shields.io/github/license/seungchan-an/zinc-downloader)
 
 Reproducible and scriptable downloader for **ZINC tranches**. 
